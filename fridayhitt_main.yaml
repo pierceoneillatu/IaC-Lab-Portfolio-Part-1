@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Infrastructure as Code - Devops .This is part of the Lab Portfolio Part 1 CloudFormation Stack to replicate a mini network with public and private subnets, EC2 instances, security groups, and appropriate networking. A small company FridayHITT provide customised different HITT training every Friday with running
+  routes local to your location. They have approached you to design a mini network for the online
+  presence. They can see that the company will expand rapidly so they want the design to be extensible
+  from the start. They know that applying good practices from the start will make this easier. 
+
+
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: fridayhitt-vpc
+
+PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc-09c43791d8f99c647
+      CidrBlock: 10.0.0.1/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [0, !GetAZs 'use1-az6']
+
+PrivateSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref vpc-09c43791d8f99c647
+      CidrBlock: 11.0.0.1/24
+      AvailabilityZone: !Select [0, !GetAZs 'use1-az6']
+
+  
