@@ -90,3 +90,29 @@ Resources:
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
+
+PrivateSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow SSH from jump box
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: ssh
+          FromPort: 22
+          ToPort: 22
+          SourceSecurityGroupId: !Ref JumpBoxSecurityGroup
+
+JumpBoxSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: "jumpbox-sg"
+      GroupDescription: "Allow SSH access to jump box"
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: ssh
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: jumpbox-sg
