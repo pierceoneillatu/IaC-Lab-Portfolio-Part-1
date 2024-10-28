@@ -1,9 +1,4 @@
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Infrastructure as Code - Devops .This is part of the Lab Portfolio Part 1 CloudFormation Stack to replicate a mini network with public and private subnets, EC2 instances, security groups, and appropriate networking. A small company FridayHITT provide customised different HITT training every Friday with running
-  routes local to your location. They have approached you to design a mini network for the online
-  presence. They can see that the company will expand rapidly so they want the design to be extensible
-  from the start. They know that applying good practices from the start will make this easier. 
-
 Mappings:
   AMIIDMap:
     us-east-1:
