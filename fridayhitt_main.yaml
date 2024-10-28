@@ -4,6 +4,11 @@ Description: Infrastructure as Code - Devops .This is part of the Lab Portfolio 
   presence. They can see that the company will expand rapidly so they want the design to be extensible
   from the start. They know that applying good practices from the start will make this easier. 
 
+Mappings:
+  AMIIDMap:
+    us-east-1:
+      MyAMI1: ami-0ff8a91507f77f867
+      MyAMI2: ami-0a584ac55a7631c0c
 
 Resources:
   VPC:
