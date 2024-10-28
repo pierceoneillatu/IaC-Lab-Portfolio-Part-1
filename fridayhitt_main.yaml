@@ -36,3 +36,15 @@ AttachGateway:
     Properties:
       VpcId: !Ref vpc-09c43791d8f99c647
       InternetGatewayId: !Ref igw-0588e3f5e937d957f
+
+PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+
+PublicRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
