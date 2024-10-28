@@ -34,5 +34,5 @@ InternetGateway:
 AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref VPC
-      InternetGatewayId: !Ref InternetGateway
+      VpcId: !Ref vpc-09c43791d8f99c647
+      InternetGatewayId: !Ref igw-0588e3f5e937d957f
