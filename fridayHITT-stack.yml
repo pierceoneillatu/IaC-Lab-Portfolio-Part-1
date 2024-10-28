@@ -1,0 +1,4 @@
+template-file-path: >-
+  https://github.com/pierceoneillatu/IaC-Lab-Portfolio-Part-1/blob/main/ec2_instances.yaml
+parameters: {}
+tags: {}
