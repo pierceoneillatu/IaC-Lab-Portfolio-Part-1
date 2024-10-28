@@ -14,37 +14,79 @@ Resources:
         - Key: Name
           Value: fridayhitt-vpc
 
-PublicSubnet:
+  PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref vpc-09c43791d8f99c647
-      CidrBlock: 10.0.0.1/24
-      AvailabilityZone: !Select [0, !GetAZs 'use1-az6']
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.1.0/24
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs 'use1-az6'
+      Tags:
+        - Key: Name
+          Value: PublicSubnet
 
-PrivateSubnet:
+  PrivateSubnet:
     Type: AWS::EC2::Subnet
     Properties:
-      VpcId: !Ref vpc-09c43791d8f99c647
-      CidrBlock: 11.0.0.1/24
-      AvailabilityZone: !Select [0, !GetAZs 'use1-az6']
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.2.0/24
+      AvailabilityZone: !Select
+        - 0
+        - !GetAZs 'use1-az6'
+      Tags:
+        - Key: Name
+          Value: PrivateSubnet
 
-InternetGateway:
+  InternetGateway:
     Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: fridayHITT-ig
 
-AttachGateway:
+  AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      VpcId: !Ref vpc-09c43791d8f99c647
-      InternetGatewayId: !Ref igw-0588e3f5e937d957f
+        InternetGatewayId: !Ref InternetGateway
+        VpcId: !Ref VPC
 
-PublicRouteTable:
+  PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
 
-PublicRoute:
+  PublicRoute:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
+
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: PrivateRouteTable
+
+  PublicSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Enable SSH and HTTP access
+      VpcId: !Ref VPC
+      SecurityGroupIngress:
+        - IpProtocol: ssh
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: http
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: https
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
