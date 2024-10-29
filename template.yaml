@@ -8,15 +8,15 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: 10.0.0.0/16
       Tags:
         - Key: Name
-          Value: fridayhitt-vpc
+          Value: firdayHITT-vpc-lab
   PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
       AvailabilityZone: !Select
         - 0
@@ -28,7 +28,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: 10.0.2.0/24
       AvailabilityZone: !Select
         - 0
         - !GetAZs us-east-1
@@ -69,15 +69,11 @@ Resources:
       GroupDescription: Enable SSH and HTTP access
       VpcId: !Ref VPC
       SecurityGroupIngress:
-        - IpProtocol: ssh
+        - IpProtocol: tcp # SSH 
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: http
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: https
+          CidrIp: 10.0.1.0/24
+        - IpProtocol: tcp # HTTPS
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
@@ -87,7 +83,7 @@ Resources:
       GroupDescription: Allow SSH from jump box
       VpcId: !Ref VPC
       SecurityGroupIngress:
-        - IpProtocol: ssh
+        - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           SourceSecurityGroupId: !Ref JumpBoxSecurityGroup
@@ -98,10 +94,10 @@ Resources:
       GroupDescription: Allow SSH access to jump box
       VpcId: !Ref VPC
       SecurityGroupIngress:
-        - IpProtocol: ssh
+        - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
+          CidrIp: 10.0.0.0/0
       Tags:
         - Key: Name
           Value: jumpbox-sg

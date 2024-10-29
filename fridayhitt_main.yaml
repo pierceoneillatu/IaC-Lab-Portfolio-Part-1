@@ -4,24 +4,27 @@ Description: Infrastructure as Code - Devops .This is part of the Lab Portfolio 
   presence. They can see that the company will expand rapidly so they want the design to be extensible
   from the start. They know that applying good practices from the start will make this easier. 
 
+AWSTemplateFormatVersion: '2010-09-09'
 Mappings:
   AMIIDMap:
     us-east-1:
       MyAMI1: ami-0ff8a91507f77f867
       MyAMI2: ami-0a584ac55a7631c0c
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: 10.0.0.0/16
       Tags:
         - Key: Name
-          Value: fridayhitt-vpc
+          Value: firdayHITT-vpc-lab
+
   PublicSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: 10.0.1.0/24
       MapPublicIpOnLaunch: true
       AvailabilityZone: !Select
         - 0
@@ -29,38 +32,44 @@ Resources:
       Tags:
         - Key: Name
           Value: PublicSubnet
+
   PrivateSubnet:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: 10.0.2.0/24
       AvailabilityZone: !Select
         - 0
         - !GetAZs us-east-1
       Tags:
         - Key: Name
           Value: PrivateSubnet
+
   InternetGateway:
     Type: AWS::EC2::InternetGateway
     Properties:
       Tags:
         - Key: Name
           Value: fridayHITT-ig
+
   AttachGateway:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
       InternetGatewayId: !Ref InternetGateway
       VpcId: !Ref VPC
+
   PublicRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
       VpcId: !Ref VPC
+
   PublicRoute:
     Type: AWS::EC2::Route
     Properties:
       RouteTableId: !Ref PublicRouteTable
       DestinationCidrBlock: 0.0.0.0/0
       GatewayId: !Ref InternetGateway
+
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
@@ -68,34 +77,33 @@ Resources:
       Tags:
         - Key: Name
           Value: PrivateRouteTable
+
   PublicSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Enable SSH and HTTP access
       VpcId: !Ref VPC
       SecurityGroupIngress:
-        - IpProtocol: ssh
+        - IpProtocol: tcp # SSH 
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: http
-          FromPort: 80
-          ToPort: 80
-          CidrIp: 0.0.0.0/0
-        - IpProtocol: https
+          CidrIp: 10.0.1.0/24
+        - IpProtocol: tcp # HTTPS
           FromPort: 443
           ToPort: 443
           CidrIp: 0.0.0.0/0
+
   PrivateSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Allow SSH from jump box
       VpcId: !Ref VPC
       SecurityGroupIngress:
-        - IpProtocol: ssh
+        - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
           SourceSecurityGroupId: !Ref JumpBoxSecurityGroup
+
   JumpBoxSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -103,13 +111,14 @@ Resources:
       GroupDescription: Allow SSH access to jump box
       VpcId: !Ref VPC
       SecurityGroupIngress:
-        - IpProtocol: ssh
+        - IpProtocol: tcp
           FromPort: 22
           ToPort: 22
-          CidrIp: 0.0.0.0/0
+          CidrIp: 10.0.0.0/0
       Tags:
         - Key: Name
           Value: jumpbox-sg
+
   PublicEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -121,6 +130,7 @@ Resources:
         - AMIIDMap
         - !Ref AWS::Region
         - MyAMI1
+
   PrivateEC2Instance:
     Type: AWS::EC2::Instance
     Properties:
@@ -132,6 +142,7 @@ Resources:
         - AMIIDMap
         - !Ref AWS::Region
         - MyAMI1
+        
   JumpBox:
     Type: AWS::EC2::Instance
     Properties:
